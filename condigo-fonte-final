@@ -1,0 +1,65 @@
+import pyautogui
+import time
+from docx import Document
+
+def texto_com_realce(run):
+    highlight = run._element.xpath('.//w:highlight')
+    return bool(highlight)
+
+def extrair_codigos_sem_realce(caminho_arquivo):
+    doc = Document(caminho_arquivo)
+    codigos = []
+
+    for paragrafo in doc.paragraphs:
+        if '|' in paragrafo.text:
+            partes = paragrafo.text.split('|')
+        else:
+            partes = [paragrafo.text]
+
+        for parte in partes:
+            codigo = parte.strip()
+            if codigo:
+                tem_realce = False
+                for run in paragrafo.runs:
+                    if codigo in run.text and texto_com_realce(run):
+                        tem_realce = True
+                        break
+                if not tem_realce:
+                    codigos.append(codigo)
+
+    return codigos
+
+def colar_conteudo_na_tela(conteudo, x, y):
+    pyautogui.write(conteudo, interval=0.05)
+
+def clicar_para_enviar():
+    pyautogui.click(21, 191)
+
+def clicar_para_foco(x, y):
+    pyautogui.click(x, y)
+
+def clicar_para_baixo(vezes, limite):
+    cliques_realizados = 0
+    while cliques_realizados < vezes and cliques_realizados < limite:
+        pyautogui.press('down')
+        cliques_realizados += 1
+        time.sleep(0.1)  # Pequena pausa entre os cliques
+
+caminho_arquivo = "C:/Users/Digital/Desktop/test/test2.docx"
+
+x, y = 18, 100
+
+codigos_extraidos = extrair_codigos_sem_realce(caminho_arquivo)
+
+limite_cliques = 38  # Defina o limite desejado
+
+for index, codigo in enumerate(codigos_extraidos, start=1):
+    clicar_para_enviar()
+    time.sleep(1)
+    # Chama a função com o número de cliques até o limite
+    clicar_para_baixo(index, limite_cliques)  # Incrementa o número de cliques para baixo a cada loop, respeitando o limite
+    time.sleep(1)
+    clicar_para_foco(x, y)
+    colar_conteudo_na_tela(codigo, x, y)
+    time.sleep(1)
+    clicar_para_foco(x, y)
