@@ -56,8 +56,7 @@ limite_cliques = 38  # Defina o limite desejado
 for index, codigo in enumerate(codigos_extraidos, start=1):
     clicar_para_enviar()
     time.sleep(1)
-    # Chama a função com o número de cliques até o limite
-    clicar_para_baixo(index, limite_cliques)  # Incrementa o número de cliques para baixo a cada loop, respeitando o limite
+    clicar_para_baixo(index, limite_cliques)  
     time.sleep(1)
     clicar_para_foco(x, y)
     colar_conteudo_na_tela(codigo, x, y)
